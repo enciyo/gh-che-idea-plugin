@@ -1,12 +1,13 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.enciyo.ghcheideaplugin</id>
-    <name>gh-che-idea</name>
+    <name>Github Copilot Chat Exporter</name>
     <vendor>enciyo</vendor>
-    <description>
-        Plugin for exporting github copilot chat
-    </description>
-
+    <description><![CDATA[
+This plugin allows you to export github copilot chat to a file.
+For more information visit the
+<a href="https://github.com/enciyo/gh-che-idea-plugin">Project site</a>.
+]]></description>
 
     <depends>com.intellij.modules.platform</depends>
 
@@ -22,7 +23,10 @@
 
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.enciyo.ghcheideaplugin.toolWindow.ExportSettingsFactory" id="GithubCopilotChatExporter"/>
+        <toolWindow
+                factoryClass="com.github.enciyo.ghcheideaplugin.toolWindow.ExportSettingsFactory"
+                id="Github Copilot Chat Exporter"
+        />
     </extensions>
 
     <depends>com.github.copilot</depends>

@@ -1,21 +1,23 @@
 package com.github.enciyo.ghcheideaplugin
 
+import com.intellij.openapi.actionSystem.impl.ActionButton
+import com.intellij.ui.LanguageTextField
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.awt.Component
 import java.awt.Container
-import javax.swing.text.JTextComponent
-import com.intellij.openapi.actionSystem.impl.ActionButton
-import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker
 import java.io.File
+import javax.swing.text.JTextComponent
 
 private const val USER_MESSAGE_COMPONENT = "UserMessageComponent"
 private const val COPILOT_MESSAGE_COMPONENT = "CopilotMessageComponent"
 private const val MESSAGE_CONTENT_PANEL = "MessageContentPanel"
-private const val HTML_CONTENT_COMPONENT = "HtmlContentComponent"
+private const val MyEditorTextField = "MyEditorTextField"
 private const val TOGGLE_BUTTONS = "MutuallyExclusiveToggleActionButtonGroup"
 
-fun Container.findComponentsByClassName(className: String): List<Component> {
+suspend fun Container.findComponentsByClassName(className: String): List<Component> = withContext(Dispatchers.Default) {
     val components = mutableListOf<Component>()
-    for (component in this.components) {
+    for (component in this@findComponentsByClassName.components) {
         if (component.javaClass.simpleName == className) {
             components.add(component)
         }
@@ -24,14 +26,18 @@ fun Container.findComponentsByClassName(className: String): List<Component> {
             components.addAll(childComponents)
         }
     }
-    return components
+    return@withContext components
 }
 
-fun Container.printAllChildren() {
-    for (component in this.components) {
-        println(component.javaClass.name)
+
+fun printBeautyContainerTree(container: Container, level: Int = 0) {
+    for (i in 0 until level) {
+        print("  ")
+    }
+    println(container.javaClass.simpleName)
+    for (component in container.components) {
         if (component is Container) {
-            component.printAllChildren()
+            printBeautyContainerTree(component, level + 1)
         }
     }
 }
@@ -45,16 +51,34 @@ fun List<Component>.asContainer(): List<Container> {
 }
 
 
-fun Container.findText(): JTextComponent {
-    return findComponentsByClassName(MESSAGE_CONTENT_PANEL)
+suspend fun Container.findText(): String {
+    var message = ""
+    findComponentsByClassName(MESSAGE_CONTENT_PANEL)
         .asContainer()
-        .map {
-            it.findComponentsByClassName(HTML_CONTENT_COMPONENT).first() as JTextComponent
+        .onEach {
+            it.components.forEach {
+                when (it::class.qualifiedName) {
+                    "com.github.copilot.chat.message.HtmlContentComponent" -> {
+                        (it as? JTextComponent?)?.let {
+                            val wrappedData = it.text.lines().joinToString("")
+                            message += "${wrappedData}\n"
+                        }
+                    }
+                    "com.github.copilot.chat.message.codeblock.CodeBlockContainer" -> {
+                        (it.asContainer().findComponentsByClassName(MyEditorTextField)
+                            .firstOrNull() as? LanguageTextField)?.let {
+                            message += "\n```" + it.text + "\n```\n\n"
+                        }
+                    }
+                }
+            }
         }
-        .first()
+
+    return message
 }
 
-fun Container.findVote(): String {
+
+suspend fun Container.findVote(): String {
     val votes = findComponentsByClassName(TOGGLE_BUTTONS)
         .first()
         .asContainer()
@@ -69,10 +93,11 @@ fun Container.findVote(): String {
 }
 
 
-fun Container.findChat(): List<Prompt> {
+suspend fun Container.findChat(): List<Prompt> = withContext(Dispatchers.Default){
     val users = findComponentsByClassName(USER_MESSAGE_COMPONENT)
     val copilots = findComponentsByClassName(COPILOT_MESSAGE_COMPONENT)
     val chats = mutableListOf<Prompt>()
+
 
     users.forEachIndexed { index, component ->
         val prompt = component.asContainer().findText()
@@ -80,13 +105,13 @@ fun Container.findChat(): List<Prompt> {
         val vote = copilots[index].asContainer().findVote()
         chats.add(
             Prompt(
-                user = prompt.text,
-                copilot = answer.text,
+                user = prompt,
+                copilot = answer,
                 vote = vote
             )
         )
     }
-    return chats
+    return@withContext chats
 }
 
 
