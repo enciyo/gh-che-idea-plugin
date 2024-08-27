@@ -64,6 +64,7 @@ suspend fun Container.findText(): String {
                             message += "${wrappedData}\n"
                         }
                     }
+
                     "com.github.copilot.chat.message.codeblock.CodeBlockContainer" -> {
                         (it.asContainer().findComponentsByClassName(MyEditorTextField)
                             .firstOrNull() as? LanguageTextField)?.let {
@@ -93,7 +94,7 @@ suspend fun Container.findVote(): String {
 }
 
 
-suspend fun Container.findChat(): List<Prompt> = withContext(Dispatchers.Default){
+suspend fun Container.findChat(): List<Prompt> = withContext(Dispatchers.Default) {
     val users = findComponentsByClassName(USER_MESSAGE_COMPONENT)
     val copilots = findComponentsByClassName(COPILOT_MESSAGE_COMPONENT)
     val chats = mutableListOf<Prompt>()

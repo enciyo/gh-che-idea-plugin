@@ -6,6 +6,7 @@ import com.github.enciyo.ghcheideaplugin.listener.AppBranchChangeListener
 import com.github.enciyo.ghcheideaplugin.service.AppSettingsService
 import com.github.enciyo.ghcheideaplugin.service.AppState
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
@@ -59,6 +60,9 @@ class ExportSettingsFactory : ToolWindowFactory {
                         { state.fileName.orEmpty() },
                         { state.fileName = it }
                     )
+                    .onChanged {
+                        state.fileName = it.text
+                    }
                     .align(AlignX.FILL)
             }
             row("Regex for file name (By Branch Name)") {

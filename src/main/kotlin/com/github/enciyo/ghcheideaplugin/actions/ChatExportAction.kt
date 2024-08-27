@@ -9,6 +9,7 @@ class ChatExportAction : AnAction() {
 
 
     override fun actionPerformed(e: AnActionEvent) {
+        println("ChatExportAction clicked")
         GithubCopilotChatExporter.export(e.project ?: return)
     }
 
