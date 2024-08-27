@@ -67,7 +67,7 @@ suspend fun Container.findText(): String {
                     "com.github.copilot.chat.message.codeblock.CodeBlockContainer" -> {
                         (it.asContainer().findComponentsByClassName(MyEditorTextField)
                             .firstOrNull() as? LanguageTextField)?.let {
-                            message += "\n```" + it.text + "\n```\n\n"
+                            message += "\n```\n" + it.text + "\n```\n\n"
                         }
                     }
                 }
