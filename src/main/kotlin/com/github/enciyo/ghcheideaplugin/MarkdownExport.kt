@@ -1,0 +1,72 @@
+package com.github.enciyo.ghcheideaplugin
+
+import com.github.enciyo.ghcheideaplugin.service.AppSettingsService
+import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
+import com.intellij.util.application
+import java.io.File
+
+
+class MarkdownExport(
+    private val project: Project
+) {
+
+    companion object {
+        private const val DIRECTORY = "/ai/copilot/prompts"
+    }
+
+    private val workingDirectory
+        get() = project.basePath.orEmpty()
+
+    init {
+        println("Working Directory: $workingDirectory")
+
+    }
+
+
+    private val branchName get() = application.service<AppSettingsService>().state.fileName.orEmpty()
+
+
+    fun export(chats: List<Prompt>) {
+        val file = createMdFile()
+        file.appendText(header(branchName))
+        chats.forEach {
+            file.appendText("\n")
+            file.appendText(template(it))
+        }
+    }
+
+    private fun createMdFile(): File {
+        makeDirectory()
+        val file = File(workingDirectory, "$DIRECTORY/$branchName.md")
+        if (file.exists()) {
+            file.delete()
+        }
+        file.createNewFile()
+        return file
+    }
+
+
+    private fun makeDirectory() {
+        val directory = File(workingDirectory, DIRECTORY)
+        if (!directory.exists()) {
+            directory.mkdirs()
+        }
+    }
+
+
+    private fun header(header: String) = "#$header\n\n"
+
+    private fun template(chat: Prompt) = """
+#### Author
+${application.service<AppSettingsService>().state.author}
+#### Prompt
+${chat.user}
+#### Answer ${chat.vote}
+${chat.copilot}
+
+---
+""".trimIndent()
+
+
+}

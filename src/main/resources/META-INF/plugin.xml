@@ -1,18 +1,30 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.enciyo.ghcheideaplugin</id>
-    <name>gh-che-idea-plugin</name>
+    <name>gh-che-idea</name>
     <vendor>enciyo</vendor>
+    <description>
+        Plugin for exporting github copilot chat
+    </description>
+
 
     <depends>com.intellij.modules.platform</depends>
 
-    <resource-bundle>messages.MyBundle</resource-bundle>
+
+    <actions>
+        <action id="Commit.Button" class="com.github.enciyo.ghcheideaplugin.actions.ChatExportAction"
+                text="Export Github Copilot Chat"
+                description="Export github copilot chat"
+        >
+            <add-to-group group-id="Vcs.MessageActionGroup" anchor="first"/>
+        </action>
+    </actions>
+
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.enciyo.ghcheideaplugin.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
+        <toolWindow factoryClass="com.github.enciyo.ghcheideaplugin.toolWindow.ExportSettingsFactory" id="GithubCopilotChatExporter"/>
     </extensions>
 
-    <applicationListeners>
-        <listener class="com.github.enciyo.ghcheideaplugin.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
-    </applicationListeners>
+    <depends>com.github.copilot</depends>
+
 </idea-plugin>
