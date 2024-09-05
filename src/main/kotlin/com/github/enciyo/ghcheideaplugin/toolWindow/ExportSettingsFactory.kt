@@ -6,7 +6,6 @@ import com.github.enciyo.ghcheideaplugin.listener.AppBranchChangeListener
 import com.github.enciyo.ghcheideaplugin.service.AppSettingsService
 import com.github.enciyo.ghcheideaplugin.service.AppState
 import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
@@ -21,10 +20,10 @@ class ExportSettingsFactory : ToolWindowFactory {
 
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
+        service.initialize(project)
         val myToolWindow = ExportSettings(toolWindow)
         val panel = myToolWindow.getContent()
         val content = ContentFactory.getInstance().createContent(panel, null, false)
-        service.initialize(project)
         toolWindow.contentManager.addContent(content)
         service.onUpdateState = {
             panel.reset()
@@ -46,6 +45,7 @@ class ExportSettingsFactory : ToolWindowFactory {
 
 
         fun getContent() = panel {
+
             row("Author (Default: Git Config user.name)") {
                 textField()
                     .text(state.author.orEmpty())
