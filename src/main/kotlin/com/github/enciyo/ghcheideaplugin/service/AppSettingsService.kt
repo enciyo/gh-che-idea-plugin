@@ -1,22 +1,16 @@
 package com.github.enciyo.ghcheideaplugin.service
 
 import com.github.enciyo.ghcheideaplugin.Github
-import com.intellij.configurationStore.setStateAndCloneIfNeeded
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.SimplePersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
-import com.intellij.openapi.components.StoragePathMacros
-import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.projectsDataDir
 
 @Service
 @State(
     name = "com.github.enciyo.ghcheideaplugin.AppState",
-    storages = [com.intellij.openapi.components.Storage(
-        StoragePathMacros.WORKSPACE_FILE,
-    )],
+    storages = [Storage("ghCheIdeaPluginSettings.xml")]
 )
 class AppSettingsService : SimplePersistentStateComponent<AppState>(AppState()) {
 

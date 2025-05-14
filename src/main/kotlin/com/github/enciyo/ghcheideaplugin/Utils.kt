@@ -80,15 +80,20 @@ suspend fun Container.findText(): String {
 
 
 suspend fun Container.findVote(): String {
-    val votes = findComponentsByClassName(TOGGLE_BUTTONS)
+    val toggleButtons = findComponentsByClassName(TOGGLE_BUTTONS)
+    if (toggleButtons.isEmpty()) return "**"
+    
+    val votes = toggleButtons
         .first()
         .asContainer()
         .findComponentsByClassName(ActionButton::class.java.simpleName)
         .map { it as ActionButton }
-
+    
+    if (votes.isEmpty()) return "**"
+    
     return when {
-        votes.first().isSelected -> "***"
-        votes.last().isSelected -> "*"
+        votes.firstOrNull()?.isSelected == true -> "***"
+        votes.lastOrNull()?.isSelected == true -> "*"
         else -> "**"
     }
 }

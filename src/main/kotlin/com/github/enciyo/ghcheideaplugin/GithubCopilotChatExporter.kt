@@ -13,7 +13,7 @@ object GithubCopilotChatExporter {
     private const val CHAT_WINDOW_ID = "GitHub Copilot Chat"
 
     private val scope = CoroutineScope(Dispatchers.Default)
-    private var job : Job? = null
+    private var job: Job? = null
 
     fun export(project: Project) {
         job?.cancel()
@@ -26,12 +26,13 @@ object GithubCopilotChatExporter {
             val contentManager = toolWindow.contentManager
             val content = contentManager.contents
             val mdExporter = MarkdownExport(project)
-            content.forEach {
-                val component = it.component
-                val chats = component.findChat()
-                thisLogger().warn("Chats: ${chats.size}")
-                mdExporter.export(chats)
-            }
+            content
+                .first()
+                .let {
+                    val component = it.component
+                    val chats = component.findChat()
+                    mdExporter.export(chats)
+                }
         }
     }
 

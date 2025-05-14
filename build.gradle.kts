@@ -17,7 +17,7 @@ version = providers.gradleProperty("pluginVersion").get()
 
 // Set the JVM language level used to build the project.
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 // Configure project's dependencies
@@ -135,11 +135,7 @@ tasks {
 }
 
 val customRunIde by intellijPlatformTesting.runIde.registering {
-    type = IntelliJPlatformType.IntellijIdeaUltimate
-
-    plugins {
-        plugin("com.github.copilot:1.5.20.6554")
-    }
+    type = IntelliJPlatformType.IntellijIdeaCommunity
 
     task {
         jvmArgumentProviders += CommandLineArgumentProvider {
@@ -148,6 +144,17 @@ val customRunIde by intellijPlatformTesting.runIde.registering {
                 "-Dide.mac.message.dialogs.as.sheets=false",
                 "-Djb.privacy.policy.text=<!--999.999-->",
                 "-Djb.consents.confirmation.enabled=false",
+                "-Xmx2048m",  // Maksimum bellek boyutu
+                "-XX:+UseG1GC",  // G1 Garbage Collector kullan
+                "-XX:CICompilerCount=2",  // JIT derleyici sayısını sınırla
+                "-XX:+UseCompressedOops",  // Sıkıştırılmış işaretçiler kullan
+                "-Djdk.attach.allowAttachSelf=true",  // Self-attachment izni
+                "-Djdk.module.illegalAccess.silent=true",  // Modül erişim uyarılarını bastır
+                "-XX:+IgnoreUnrecognizedVMOptions",  // Tanınmayan VM seçeneklerini yoksay
+                "-Dapple.awt.UIElement=true",  // Apple Silicon uyumluluğu için
+                "-Dsun.io.useCanonCaches=false",  // Canon cache devre dışı
+                "-Dsun.java2d.metal=true",  // Metal renderer
+                "-Dide.no.platform.update=true"  // Platform güncellemelerini devre dışı bırak
             )
         }
     }
@@ -163,6 +170,17 @@ intellijPlatformTesting {
                         "-Dide.mac.message.dialogs.as.sheets=false",
                         "-Djb.privacy.policy.text=<!--999.999-->",
                         "-Djb.consents.confirmation.enabled=false",
+                        "-Xmx2048m",  // Maksimum bellek boyutu
+                        "-XX:+UseG1GC",  // G1 Garbage Collector kullan
+                        "-XX:CICompilerCount=2",  // JIT derleyici sayısını sınırla
+                        "-XX:+UseCompressedOops",  // Sıkıştırılmış işaretçiler kullan
+                        "-Djdk.attach.allowAttachSelf=true",  // Self-attachment izni
+                        "-Djdk.module.illegalAccess.silent=true",  // Modül erişim uyarılarını bastır
+                        "-XX:+IgnoreUnrecognizedVMOptions",  // Tanınmayan VM seçeneklerini yoksay
+                        "-Dapple.awt.UIElement=true",  // Apple Silicon uyumluluğu için
+                        "-Dsun.io.useCanonCaches=false",  // Canon cache devre dışı
+                        "-Dsun.java2d.metal=true",  // Metal renderer
+                        "-Dide.no.platform.update=true"  // Platform güncellemelerini devre dışı bırak
                     )
                 }
             }
