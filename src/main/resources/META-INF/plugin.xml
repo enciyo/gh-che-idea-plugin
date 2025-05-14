@@ -4,7 +4,8 @@
     <name>Github Copilot Chat Exporter</name>
     <vendor>enciyo</vendor>
     <description><![CDATA[
-This plugin allows you to export github copilot chat to a file.
+This plugin allows you to export your GitHub Copilot chat conversations to various file formats.
+It provides an easy way to save and share your AI-assisted coding discussions with others.
 For more information visit the
 <a href="https://github.com/enciyo/gh-che-idea-plugin">Project site</a>.
 ]]></description>
