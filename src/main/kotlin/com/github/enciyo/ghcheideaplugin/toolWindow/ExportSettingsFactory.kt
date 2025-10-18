@@ -65,7 +65,7 @@ class ExportSettingsFactory : ToolWindowFactory {
                     }
                     .align(AlignX.FILL)
             }
-            row("Regex for file name (By Branch Name)") {
+            row("Regex for chat title (By Branch Name)") {
                 textField()
                     .text(state.regex.orEmpty())
                     .align(AlignX.FILL)

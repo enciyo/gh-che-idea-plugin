@@ -3,30 +3,16 @@
     <id>com.github.enciyo.ghcheideaplugin</id>
     <name>Github Copilot Chat Exporter</name>
     <vendor>enciyo</vendor>
-    <description><![CDATA[
-This plugin allows you to export your GitHub Copilot chat conversations to various file formats.
-It provides an easy way to save and share your AI-assisted coding discussions with others.
-For more information visit the
-<a href="https://github.com/enciyo/gh-che-idea-plugin">Project site</a>.
-]]></description>
-
     <depends>com.intellij.modules.platform</depends>
 
-
     <actions>
-        <action id="Commit.Button" class="com.github.enciyo.ghcheideaplugin.actions.ChatExportAction"
-                text="Export Github Copilot Chat"
-                description="Export github copilot chat"
-        >
-            <add-to-group group-id="Vcs.MessageActionGroup" anchor="first"/>
-        </action>
+        <action id="Commit.Button" class="com.github.enciyo.ghcheideaplugin.actions.ChatExportAction"/>
     </actions>
-
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow
                 factoryClass="com.github.enciyo.ghcheideaplugin.toolWindow.ExportSettingsFactory"
-                id="Github Copilot Chat Exporter"
+                id="GithubCopilotChatExporter"
         />
     </extensions>
 
