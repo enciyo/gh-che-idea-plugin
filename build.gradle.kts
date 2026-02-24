@@ -2,6 +2,7 @@ import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.models.ProductRelease
 
 plugins {
     id("java") // Java support
@@ -44,7 +45,6 @@ dependencies {
         // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
         plugins(providers.gradleProperty("platformPlugins").map { it.split(',') })
 
-        instrumentationTools()
         pluginVerifier()
         zipSigner()
         testFramework(TestFrameworkType.Platform)
@@ -100,9 +100,15 @@ intellijPlatform {
             .map { listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" }) }
     }
 
+
     pluginVerification {
         ides {
-            recommended()
+            select {
+                types = listOf(IntelliJPlatformType.IntellijIdeaCommunity)
+                channels = listOf(ProductRelease.Channel.RELEASE)
+                sinceBuild = providers.gradleProperty("pluginSinceBuild")
+                untilBuild = providers.gradleProperty("pluginUntilBuild")
+            }
         }
     }
 }
@@ -139,23 +145,7 @@ val customRunIde by intellijPlatformTesting.runIde.registering {
 
     task {
         jvmArgumentProviders += CommandLineArgumentProvider {
-            listOf(
-                "-Drobot-server.port=8082",
-                "-Dide.mac.message.dialogs.as.sheets=false",
-                "-Djb.privacy.policy.text=<!--999.999-->",
-                "-Djb.consents.confirmation.enabled=false",
-                "-Xmx2048m",  // Maksimum bellek boyutu
-                "-XX:+UseG1GC",  // G1 Garbage Collector kullan
-                "-XX:CICompilerCount=2",  // JIT derleyici sayısını sınırla
-                "-XX:+UseCompressedOops",  // Sıkıştırılmış işaretçiler kullan
-                "-Djdk.attach.allowAttachSelf=true",  // Self-attachment izni
-                "-Djdk.module.illegalAccess.silent=true",  // Modül erişim uyarılarını bastır
-                "-XX:+IgnoreUnrecognizedVMOptions",  // Tanınmayan VM seçeneklerini yoksay
-                "-Dapple.awt.UIElement=true",  // Apple Silicon uyumluluğu için
-                "-Dsun.io.useCanonCaches=false",  // Canon cache devre dışı
-                "-Dsun.java2d.metal=true",  // Metal renderer
-                "-Dide.no.platform.update=true"  // Platform güncellemelerini devre dışı bırak
-            )
+            listOf()
         }
     }
 }
@@ -165,23 +155,7 @@ intellijPlatformTesting {
         register("runIdeForUiTests") {
             task {
                 jvmArgumentProviders += CommandLineArgumentProvider {
-                    listOf(
-                        "-Drobot-server.port=8082",
-                        "-Dide.mac.message.dialogs.as.sheets=false",
-                        "-Djb.privacy.policy.text=<!--999.999-->",
-                        "-Djb.consents.confirmation.enabled=false",
-                        "-Xmx2048m",  // Maksimum bellek boyutu
-                        "-XX:+UseG1GC",  // G1 Garbage Collector kullan
-                        "-XX:CICompilerCount=2",  // JIT derleyici sayısını sınırla
-                        "-XX:+UseCompressedOops",  // Sıkıştırılmış işaretçiler kullan
-                        "-Djdk.attach.allowAttachSelf=true",  // Self-attachment izni
-                        "-Djdk.module.illegalAccess.silent=true",  // Modül erişim uyarılarını bastır
-                        "-XX:+IgnoreUnrecognizedVMOptions",  // Tanınmayan VM seçeneklerini yoksay
-                        "-Dapple.awt.UIElement=true",  // Apple Silicon uyumluluğu için
-                        "-Dsun.io.useCanonCaches=false",  // Canon cache devre dışı
-                        "-Dsun.java2d.metal=true",  // Metal renderer
-                        "-Dide.no.platform.update=true"  // Platform güncellemelerini devre dışı bırak
-                    )
+                    listOf()
                 }
             }
 

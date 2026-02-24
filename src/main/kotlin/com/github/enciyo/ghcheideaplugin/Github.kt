@@ -12,19 +12,27 @@ class Github(
 
 
     fun getCurrentBranchName(): String {
-        val process = ProcessBuilder("git", "branch", "--show-current")
-            .directory(workingDirectory.toFile())
-            .start()
-        val reader = process.inputStream.bufferedReader()
-        return reader.readLine()
+        return try {
+            val process = ProcessBuilder("git", "branch", "--show-current")
+                .directory(workingDirectory.toFile())
+                .start()
+            val reader = process.inputStream.bufferedReader()
+            reader.readLine() ?: "master"
+        } catch (e: Exception) {
+            "master"
+        }
     }
 
     fun getCurrentConfigName(): String {
-        val process = ProcessBuilder("git", "config", "--get", "user.name")
-            .directory(workingDirectory.toFile())
-            .start()
-        val reader = process.inputStream.bufferedReader()
-        return reader.readLine()
+        return try {
+            val process = ProcessBuilder("git", "config", "--get", "user.name")
+                .directory(workingDirectory.toFile())
+                .start()
+            val reader = process.inputStream.bufferedReader()
+            reader.readLine() ?: "Unknown"
+        } catch (e: Exception) {
+            "Unknown"
+        }
     }
 
 

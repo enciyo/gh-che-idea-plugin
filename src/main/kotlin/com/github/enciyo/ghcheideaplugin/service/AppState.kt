@@ -7,7 +7,6 @@ class AppState : BaseState() {
     var fileName by string()
     var regex by string()
     var useRegex by property(false)
-
-
+    var exportPath by string("/ai/copilot/prompts")
 }
 
